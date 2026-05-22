@@ -1,0 +1,8 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-dotenv>=1.0
+numpy>=1.26,<2          # torch 2.2 (last x86_64 macOS wheel) needs numpy 1.x
+opencv-python>=4.8
+ultralytics>=8.3
+torch>=2.2
+djitellopy>=2.5

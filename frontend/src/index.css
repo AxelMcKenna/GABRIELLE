@@ -1,0 +1,117 @@
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: "DM Sans", system-ui, sans-serif;
+  background: #060607;
+  color: #e7e5e4;
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-sans uppercase tracking-[0.32em] text-[10px] font-medium text-neutral-500;
+  }
+  .h-display {
+    @apply font-sans uppercase tracking-widest font-semibold;
+  }
+}
+
+/* Silhouette: clip a directional gradient to the SVG shape — gives the
+   flat landmass a sense of curvature and lighting on the dark canvas. */
+.nz-mask {
+  -webkit-mask: url("/nz.svg") no-repeat center / contain;
+          mask: url("/nz.svg") no-repeat center / contain;
+  background:
+    radial-gradient(120% 80% at 28% 22%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 45%),
+    linear-gradient(118deg, #e8e6e1 0%, #b9b6b0 38%, #7b7872 72%, #a8a59f 100%);
+  filter:
+    drop-shadow(0 0 28px rgba(255,255,255,0.06))
+    drop-shadow(0 18px 22px rgba(0,0,0,0.6))
+    drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  transform: perspective(1400px) rotateY(-6deg) rotateX(1.5deg);
+  transform-origin: center;
+}
+
+/* Sphere artwork — landing */
+.locus-orbit-a { animation: locus-rotate 26s linear infinite; transform-origin: center; transform-box: fill-box; }
+.locus-orbit-b { animation: locus-rotate-rev 38s linear infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes locus-rotate     { from { transform: rotate(0deg); }    to { transform: rotate(360deg); } }
+@keyframes locus-rotate-rev { from { transform: rotate(360deg); }  to { transform: rotate(0deg); }   }
+
+.locus-pulse       { animation: locus-pulse-dot 2.4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+.locus-pulse-ring  { animation: locus-pulse-halo 2.4s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes locus-pulse-dot {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%      { transform: scale(1.4); opacity: 0.7; }
+}
+@keyframes locus-pulse-halo {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(1.8); opacity: 0;   }
+}
+
+/* Landing — 3D orbiting accent particles around the sphere.
+   `.gabrielle-orbits` provides the perspective; each `.gabrielle-orbit-tilt`
+   sets a unique orbit plane; `.gabrielle-orbit` spins around its Y axis. */
+.gabrielle-orbits {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+.gabrielle-orbit-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.gabrielle-orbit {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: gabrielle-orbit-spin 40s linear infinite;
+}
+.gabrielle-orbit-dot {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 999px;
+  background: #1E55E8;
+  box-shadow: 0 0 10px 2px rgba(30, 85, 232, 0.55);
+  animation: gabrielle-orbit-pulse 2.6s ease-in-out infinite;
+}
+@keyframes gabrielle-orbit-spin {
+  from { transform: rotateY(0deg);   }
+  to   { transform: rotateY(360deg); }
+}
+@keyframes gabrielle-orbit-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.6); opacity: 0.55; }
+}
+
+/* Landing CTA — perpetual subtle nudge on the arrow so the button reads as live.
+   Hover hands off to a faster, larger translate via group-hover on the wrapper. */
+.gabrielle-cta-arrow {
+  animation: gabrielle-cta-nudge 1.8s ease-in-out infinite;
+}
+@keyframes gabrielle-cta-nudge {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(3px); }
+}
+
+/* Drone marker (overlaid on the active grid tile) */
+.locus-drone {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.locus-drone .rotor {
+  animation: locus-spin 0.18s linear infinite;
+}
+@keyframes locus-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+

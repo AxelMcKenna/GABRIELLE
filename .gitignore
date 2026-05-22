@@ -1,0 +1,12 @@
+node_modules
+dist
+.DS_Store
+.idea
+*.local
+.venv
+.env
+__pycache__/
+*.pyc
+yolo*.pt
+.vite/
+*.tsbuildinfo
