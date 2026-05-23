@@ -1,4 +1,4 @@
-# LOCUS — Search-Area Coverage Demo (YOLO + Tello)
+# GABRIELLE — Search-Area Coverage Demo (YOLO + Tello)
 
 A small, offline-leaning demo: a **grey → yellow → red coverage map** driven by **local YOLO**
 detections on a webcam (default) or a Tello drone stream. A simulated lawnmower "sweep" walks an
