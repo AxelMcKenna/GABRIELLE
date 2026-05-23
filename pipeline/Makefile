@@ -5,9 +5,10 @@ BUILD   = build
 
 LIB_OBJS = $(BUILD)/locus_frame.o $(BUILD)/locus_stream.o
 BINS     = $(BUILD)/weather_sim $(BUILD)/drone_sim \
-           $(BUILD)/relay $(BUILD)/test_frame
+           $(BUILD)/relay $(BUILD)/udp_send $(BUILD)/udp_ingest \
+           $(BUILD)/test_frame
 
-.PHONY: all test clean run
+.PHONY: all test clean run run_udp
 
 all: $(BINS)
 
@@ -29,6 +30,12 @@ $(BUILD)/drone_sim: $(BUILD)/drone_sim.o $(LIB_OBJS)
 $(BUILD)/relay: $(BUILD)/relay.o $(LIB_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
+$(BUILD)/udp_send: $(BUILD)/udp_send.o $(LIB_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD)/udp_ingest: $(BUILD)/udp_ingest.o $(LIB_OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
 $(BUILD)/test_frame: $(BUILD)/test_frame.o $(LIB_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
@@ -41,6 +48,16 @@ run: $(BUILD)/drone_sim $(BUILD)/relay
 	  ./$(BUILD)/relay & RELAY=$$!; \
 	  sleep 3; \
 	  kill `cat $(BUILD)/.sim.pid` $$RELAY 2>/dev/null; \
+	  wait 2>/dev/null; rm -f $(BUILD)/.sim.pid; true
+
+# UDP smoke: ingest in background, drone simulator → udp_send → ingest (3s).
+run_udp: $(BUILD)/drone_sim $(BUILD)/udp_send $(BUILD)/udp_ingest
+	@./$(BUILD)/udp_ingest 5005 & INGEST=$$!; \
+	  sleep 0.3; \
+	  ( ./$(BUILD)/drone_sim & echo $$! > $(BUILD)/.sim.pid ) | \
+	    ./$(BUILD)/udp_send 127.0.0.1 5005 & SEND=$$!; \
+	  sleep 3; \
+	  kill `cat $(BUILD)/.sim.pid` $$SEND $$INGEST 2>/dev/null; \
 	  wait 2>/dev/null; rm -f $(BUILD)/.sim.pid; true
 
 clean:
